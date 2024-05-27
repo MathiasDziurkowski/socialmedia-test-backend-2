@@ -11,15 +11,16 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
-@RestController
+@Controller
 @RequestMapping("/auth")
 public class AuthController {
     @Autowired
     private UsuarioRepository usuarioRepository;
     @Autowired
-    private PasswordEncoder passwordEncoder;
+    private PasswordEncoder encoder;
     @Autowired
     private JwtService jwtService;
     @Autowired
@@ -28,8 +29,7 @@ public class AuthController {
     @PostMapping("/cadastro")
     @ResponseBody
     public ResponseEntity<Usuario> cadastrar(@RequestBody Usuario usuario) {
-        usuario.setSenha(passwordEncoder.encode(usuario.getSenha()));
-        usuarioRepository.save(usuario);
+        userService.cadastrar(usuario);
         return ResponseEntity.ok(usuario);
     }
     @PostMapping("/login")
