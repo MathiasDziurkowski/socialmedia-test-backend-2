@@ -26,6 +26,10 @@ public class UserServiceImpl implements UserDetailsService {
     }
 
     public Usuario cadastrar(Usuario usuario){
+        Usuario usuarioInvalido = usuarioRepository.findByEmail(usuario.getEmail()).orElseThrow(() -> null);
+        if (usuarioInvalido != null){
+            throw new RuntimeException("Usuário já existente");
+        }
         usuario.setSenha(passwordEncoder.encode(usuario.getSenha()));
         usuarioRepository.save(usuario);
         return usuario;
@@ -33,12 +37,13 @@ public class UserServiceImpl implements UserDetailsService {
 
     public UserDetails autenticar(Usuario usuario) {
         UserDetails user = usuarioRepository.findByEmail(usuario.getEmail()).orElseThrow(() -> new UsernameNotFoundException(usuario.getEmail()));
+        usuario.setSenha(passwordEncoder.encode(usuario.getSenha()));
         boolean senhasMatches = passwordEncoder.matches(user.getPassword(), usuario.getSenha());
         if (senhasMatches) {
             return user;
         }
 
-        throw new RuntimeException("Senhas não batem");
+        throw new RuntimeException("Senhas não batem ");
     }
 
 }
