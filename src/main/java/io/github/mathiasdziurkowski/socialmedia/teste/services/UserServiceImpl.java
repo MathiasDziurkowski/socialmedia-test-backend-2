@@ -11,6 +11,8 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.util.Optional;
+
 @Service
 public class UserServiceImpl implements UserDetailsService {
 
@@ -26,8 +28,8 @@ public class UserServiceImpl implements UserDetailsService {
     }
 
     public Usuario cadastrar(Usuario usuario){
-        Usuario usuarioInvalido = usuarioRepository.findByEmail(usuario.getEmail()).orElseThrow(() -> null);
-        if (usuarioInvalido != null){
+        Optional<Usuario> usuarioInvalido = usuarioRepository.findByEmail(usuario.getEmail());
+        if (usuarioInvalido.isPresent()){
             throw new RuntimeException("Usuário já existente");
         }
         usuario.setSenha(passwordEncoder.encode(usuario.getSenha()));
@@ -37,13 +39,12 @@ public class UserServiceImpl implements UserDetailsService {
 
     public UserDetails autenticar(Usuario usuario) {
         UserDetails user = usuarioRepository.findByEmail(usuario.getEmail()).orElseThrow(() -> new UsernameNotFoundException(usuario.getEmail()));
-        usuario.setSenha(passwordEncoder.encode(usuario.getSenha()));
-        boolean senhasMatches = passwordEncoder.matches(user.getPassword(), usuario.getSenha());
+        boolean senhasMatches = passwordEncoder.matches(usuario.getSenha(), user.getPassword());
         if (senhasMatches) {
             return user;
         }
 
-        throw new RuntimeException("Senhas não batem ");
+        throw new RuntimeException("Senhas não batem " + usuario.getSenha() + " " + user.getPassword());
     }
 
 }

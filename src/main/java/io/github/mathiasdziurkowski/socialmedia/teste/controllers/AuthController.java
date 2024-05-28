@@ -2,6 +2,7 @@ package io.github.mathiasdziurkowski.socialmedia.teste.controllers;
 
 import com.auth0.jwt.exceptions.JWTCreationException;
 import io.github.mathiasdziurkowski.socialmedia.teste.dtos.LoginDTO;
+import io.github.mathiasdziurkowski.socialmedia.teste.dtos.PerfilDTO;
 import io.github.mathiasdziurkowski.socialmedia.teste.dtos.TokenDTO;
 import io.github.mathiasdziurkowski.socialmedia.teste.models.Usuario;
 import io.github.mathiasdziurkowski.socialmedia.teste.repositories.UsuarioRepository;
@@ -14,8 +15,11 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Optional;
+
 @Controller
 @RequestMapping("/auth")
+@CrossOrigin("*")
 public class AuthController {
     @Autowired
     private UsuarioRepository usuarioRepository;
@@ -47,5 +51,13 @@ public class AuthController {
             throw new RuntimeException(e.getMessage());
         }
     }
+
+    @GetMapping("/perfil")
+    @ResponseBody
+    public ResponseEntity<Usuario> perfil(@RequestBody PerfilDTO perfilDTO) {
+        Usuario usuarioAchado = usuarioRepository.findByNome(perfilDTO.nome()).orElseThrow(() -> new RuntimeException("Usuário não encontrado"));
+        return ResponseEntity.ok(usuarioAchado);
+    }
+
 
 }
