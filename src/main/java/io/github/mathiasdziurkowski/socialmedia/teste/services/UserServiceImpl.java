@@ -16,15 +16,17 @@ import java.util.Optional;
 @Service
 public class UserServiceImpl implements UserDetailsService {
 
-    @Autowired
     private UsuarioRepository usuarioRepository;
-    @Autowired
     private PasswordEncoder passwordEncoder;
 
+    public UserServiceImpl(UsuarioRepository usuarioRepository, PasswordEncoder passwordEncoder) {
+        this.usuarioRepository = usuarioRepository;
+        this.passwordEncoder = passwordEncoder;
+    }
 
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        return usuarioRepository.findByEmail(username).orElseThrow(() -> new RuntimeException("usuario nao encontrado"));
+        return usuarioRepository.findByEmail(username).orElseThrow(() -> new RuntimeException("Usuário não encontrado" + username));
     }
 
     public Usuario cadastrar(Usuario usuario){

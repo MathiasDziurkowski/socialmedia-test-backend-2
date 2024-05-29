@@ -23,14 +23,19 @@ import java.util.Optional;
 @RequestMapping("/auth")
 @CrossOrigin("*")
 public class AuthController {
-    @Autowired
+
     private UsuarioRepository usuarioRepository;
-    @Autowired
     private PasswordEncoder encoder;
-    @Autowired
     private JwtService jwtService;
-    @Autowired
     private UserServiceImpl userService;
+
+    public AuthController(UsuarioRepository usuarioRepository, PasswordEncoder encoder, JwtService jwtService, UserServiceImpl userService) {
+        this.usuarioRepository = usuarioRepository;
+        this.encoder = encoder;
+        this.jwtService = jwtService;
+        this.userService = userService;
+    }
+
     @PostMapping("/cadastro")
     @ResponseBody
     public ResponseEntity<Usuario> cadastrar(@RequestBody Usuario usuario) {

@@ -26,7 +26,7 @@ public class JwtService {
         Instant instant = Date.from(dataExpiracao.atZone(ZoneId.systemDefault()).toInstant()).toInstant();
         Date data = Date.from(instant);
         return Jwts.builder()
-                .setSubject(usuario.getSenha())
+                .setSubject(usuario.getEmail())
                 .setExpiration(data)
                 .signWith(SignatureAlgorithm.HS512, chave)
                 .compact();
