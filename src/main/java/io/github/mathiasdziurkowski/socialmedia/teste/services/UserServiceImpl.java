@@ -44,7 +44,7 @@ public class UserServiceImpl implements UserDetailsService {
             return user;
         }
 
-        throw new RuntimeException("Senhas não batem " + usuario.getSenha() + " " + user.getPassword());
+        throw new RuntimeException("Senhas não batem");
     }
 
 }

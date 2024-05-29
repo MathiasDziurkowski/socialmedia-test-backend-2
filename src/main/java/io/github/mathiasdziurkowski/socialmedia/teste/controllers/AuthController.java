@@ -10,14 +10,16 @@ import io.github.mathiasdziurkowski.socialmedia.teste.services.JwtService;
 import io.github.mathiasdziurkowski.socialmedia.teste.services.UserServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
 import java.util.Optional;
 
-@Controller
+@RestController
 @RequestMapping("/auth")
 @CrossOrigin("*")
 public class AuthController {
@@ -29,7 +31,6 @@ public class AuthController {
     private JwtService jwtService;
     @Autowired
     private UserServiceImpl userService;
-
     @PostMapping("/cadastro")
     @ResponseBody
     public ResponseEntity<Usuario> cadastrar(@RequestBody Usuario usuario) {
@@ -54,9 +55,9 @@ public class AuthController {
 
     @GetMapping("/perfil")
     @ResponseBody
-    public ResponseEntity<Usuario> perfil(@RequestBody PerfilDTO perfilDTO) {
-        Usuario usuarioAchado = usuarioRepository.findByNome(perfilDTO.nome()).orElseThrow(() -> new RuntimeException("Usuário não encontrado"));
-        return ResponseEntity.ok(usuarioAchado);
+    public ResponseEntity<Usuario> perfil(@AuthenticationPrincipal UserDetails userDetails) {
+        Usuario usuario = usuarioRepository.findByEmail(userDetails.getUsername()).orElseThrow(() -> new RuntimeException("Usuário não encontrado"));
+        return ResponseEntity.ok(usuario);
     }
 
 
